@@ -15,6 +15,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import static properties.Constants.BASE_URL;
 import static utils.HttpUtils.sendRequest;
@@ -33,14 +34,10 @@ public class UserService {
         return objectMapper.readValue(jsonResponse, User.class);
     }
 
-    public User getUserByUsername(String username) throws Exception {
+    public Optional<User> getUserByUsername(String username) throws Exception {
         String jsonResponse = sendRequest(new HttpGet(BASE_URL + "?username=" + username), true);
         User[] users = objectMapper.readValue(jsonResponse, User[].class);
-        if (users.length > 0) {
-            return users[0];
-        } else {
-            return null;
-        }
+        return users.length > 0 ? Optional.of(users[0]) : Optional.empty();
     }
 
     public User createUser(String userJson) throws Exception {
